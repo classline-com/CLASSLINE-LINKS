@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>کلاس‌لاین</title>
+<meta name="theme-color" content="#07070a">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  :root{
+    --bg:#07070a; --red:#ff2a3d; --red2:#b10f22; --glass:rgba(255,255,255,.055);
+    --line:rgba(255,255,255,.1); --text:#f4f1f1; --muted:#a79c9e;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html{scroll-behavior:smooth}
+  body{font-family:Vazirmatn,Tahoma,"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--text);
+       min-height:100vh;overflow-x:hidden;padding-bottom:env(safe-area-inset-bottom)}
+
+  /* پس‌زمینه زنده */
+  .bg{position:fixed;inset:0;z-index:-1;overflow:hidden}
+  .bg i{position:absolute;border-radius:50%;filter:blur(90px);opacity:.55;animation:float 14s ease-in-out infinite}
+  .bg i:nth-child(1){width:420px;height:420px;background:var(--red2);top:-120px;right:-100px}
+  .bg i:nth-child(2){width:360px;height:360px;background:#5a0712;bottom:-100px;left:-120px;animation-delay:-5s}
+  .bg i:nth-child(3){width:240px;height:240px;background:var(--red);top:45%;left:30%;opacity:.18;animation-delay:-9s}
+  .bg::after{content:"";position:absolute;inset:0;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:44px 44px;opacity:.25;
+    -webkit-mask-image:radial-gradient(ellipse at 50% 0,#000 10%,transparent 70%);mask-image:radial-gradient(ellipse at 50% 0,#000 10%,transparent 70%)}
+  @keyframes float{50%{transform:translate(40px,30px) scale(1.12)}}
+
+  /* هدر */
+  header{text-align:center;padding:42px 18px 22px;max-width:680px;margin:0 auto}
+  .logo{display:inline-block;cursor:pointer;margin-bottom:14px;transition:transform .25s;
+        filter:drop-shadow(0 0 22px rgba(255,42,61,.45))}
+  .logo:hover{transform:scale(1.04)}
+  .logo img{height:50px;display:block;max-width:80vw}
+  .logo .wordmark{font-family:Arial,sans-serif;font-weight:900;letter-spacing:6px;font-size:30px;direction:ltr;display:block}
+  .tag{font-size:13.5px;color:var(--muted);line-height:1.9}
+  .pill{display:inline-flex;align-items:center;gap:7px;margin-top:14px;font-size:11.5px;color:#ffd5d9;
+        border:1px solid rgba(255,42,61,.4);background:rgba(255,42,61,.1);padding:5px 12px;border-radius:30px}
+  .pill b{width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 0 0 rgba(255,42,61,.7);animation:pulse 1.8s infinite}
+  @keyframes pulse{70%{box-shadow:0 0 0 9px rgba(255,42,61,0)}100%{box-shadow:0 0 0 0 rgba(255,42,61,0)}}
+
+  /* جستجو */
+  .search{max-width:680px;margin:6px auto 4px;padding:0 16px;position:sticky;top:0;z-index:5;padding-top:8px;padding-bottom:8px}
+  .search input{width:100%;font:inherit;font-size:14px;color:var(--text);background:rgba(20,20,26,.75);
+    -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:16px;
+    padding:14px 16px 14px 44px;outline:none;transition:.2s}
+  .search input::placeholder{color:#7d7275}
+  .search input:focus{border-color:var(--red);box-shadow:0 0 0 4px rgba(255,42,61,.15)}
+  .search::after{content:"⌕";position:absolute;left:32px;top:50%;transform:translateY(-50%);font-size:20px;color:var(--muted);pointer-events:none}
+
+  main{max-width:680px;margin:0 auto;padding:4px 16px 20px}
+  h2{font-size:14px;font-weight:700;margin:26px 4px 12px;display:flex;align-items:center;gap:10px;color:#fff;
+     opacity:0;animation:up .6s forwards}
+  h2::after{content:"";flex:1;height:1px;background:linear-gradient(to left,var(--line),transparent)}
+  h2::before{content:"";width:9px;height:9px;transform:rotate(45deg);background:var(--red);box-shadow:0 0 12px var(--red)}
+
+  /* کارت‌ها */
+  .card{position:relative;display:flex;gap:14px;align-items:center;padding:15px;margin-bottom:11px;border-radius:20px;
+        text-decoration:none;color:inherit;cursor:pointer;overflow:hidden;
+        background:var(--glass);border:1px solid var(--line);
+        -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+        opacity:0;animation:up .6s forwards;transition:transform .2s,border-color .2s,background .2s,box-shadow .2s}
+  .card::before{content:"";position:absolute;inset:0;background:radial-gradient(260px circle at var(--mx,50%) var(--my,0%),rgba(255,42,61,.22),transparent 60%);
+        opacity:0;transition:opacity .25s}
+  .card:hover{transform:translateY(-3px);border-color:rgba(255,42,61,.55);box-shadow:0 14px 34px -12px rgba(255,42,61,.45)}
+  .card:hover::before{opacity:1}
+  .card:active{transform:scale(.98)}
+  .ico{position:relative;flex:none;width:52px;height:52px;border-radius:15px;display:grid;place-items:center;font-size:26px;
+       background:linear-gradient(145deg,rgba(255,42,61,.28),rgba(255,42,61,.05));border:1px solid rgba(255,42,61,.3)}
+  .info{position:relative;flex:1;min-width:0}
+  .info b{display:flex;align-items:center;flex-wrap:wrap;gap:8px;font-size:14.5px;line-height:1.7}
+  .info .d{display:block;font-size:12.3px;color:var(--muted);margin-top:3px;line-height:1.85}
+  .badge{font-size:10px;background:var(--red);color:#fff;padding:2px 9px;border-radius:20px;font-weight:700}
+  .go{position:relative;flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
+      background:rgba(255,255,255,.07);color:var(--red);font-size:18px;transition:.2s}
+  .card:hover .go{background:var(--red);color:#fff;transform:translateX(-4px)}
+
+  .empty{text-align:center;color:var(--muted);padding:40px;font-size:14px;display:none}
+  footer{text-align:center;color:var(--muted);font-size:12.5px;line-height:2;padding:14px 18px 38px;max-width:680px;margin:0 auto}
+  footer a{display:inline-block;margin-top:8px;color:#fff;text-decoration:none;font-weight:700;direction:ltr;
+           border:1px solid var(--line);border-radius:30px;padding:7px 18px;background:var(--glass);transition:.2s}
+  footer a:hover{border-color:var(--red);box-shadow:0 0 20px rgba(255,42,61,.35)}
+
+  @keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-delay:0s!important}}
+</style>
+</head>
+<body>
+<div class="bg"><i></i><i></i><i></i></div>
+
+<header>
+  <div class="logo" id="logo"></div>
+  <p class="tag" id="tagline"></p>
+  <div class="pill"><b></b><span>به‌روزرسانی مداوم</span></div>
+</header>
+
+<div class="search"><input id="q" type="search" placeholder="جستجو در آزمون‌ها و کتاب‌ها…" autocomplete="off"></div>
+<main id="app"></main>
+<div class="empty" id="empty">موردی پیدا نشد</div>
+<footer><div id="footerText"></div><a id="handle" href="#"></a></footer>
+
+<script src="content.js"></script>
+<script>
+(function(){
+  var C = window.CLASSLINE, tg = window.Telegram && window.Telegram.WebApp;
+
+  if (tg) {
+    try { tg.ready(); tg.expand();
+      tg.setHeaderColor && tg.setHeaderColor("#07070a");
+      tg.setBackgroundColor && tg.setBackgroundColor("#07070a"); } catch(e){}
+  }
+  function openUrl(u){
+    if (tg && /^https?:\/\/(t|telegram)\.me\//i.test(u) && tg.openTelegramLink) return tg.openTelegramLink(u);
+    if (tg && tg.openLink) return tg.openLink(u);
+    window.open(u, "_blank", "noopener");
+  }
+
+  var logo = document.getElementById("logo");
+  function wordmark(){ logo.innerHTML = '<span class="wordmark">CLASSLINE</span>'; }
+  wordmark();
+  if (C.brand.logo) {
+    var img = new Image(); img.alt = C.brand.name;
+    img.onload = function(){ logo.innerHTML = ""; logo.appendChild(img); };
+    img.src = C.brand.logo;
+  }
+  logo.onclick = function(){ openUrl(C.brand.channel); };
+  document.getElementById("tagline").textContent = C.brand.tagline;
+  document.getElementById("footerText").textContent = C.footer || "";
+  var h = document.getElementById("handle"); h.textContent = C.brand.handle;
+  h.onclick = function(e){ e.preventDefault(); openUrl(C.brand.channel); };
+
+  var app = document.getElementById("app"), empty = document.getElementById("empty");
+  function esc(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
+  function render(filter){
+    var f = (filter || "").trim().toLowerCase(), html = "", any = false, n = 0;
+    C.sections.forEach(function(s){
+      var items = s.items.filter(function(it){
+        return !f || (it.title + " " + (it.desc||"")).toLowerCase().indexOf(f) > -1;
+      });
+      if (!items.length) return;
+      any = true;
+      html += '<h2 style="animation-delay:' + (n*60) + 'ms">' + esc(s.title) + "</h2>";
+      items.forEach(function(it){
+        n++;
+        html += '<a class="card" style="animation-delay:' + (n*70) + 'ms" data-url="' + esc(it.url) + '" href="' + esc(it.url) + '">' +
+          '<div class="ico">' + esc(it.icon || "🔗") + '</div>' +
+          '<div class="info"><b>' + esc(it.title) + (it.badge ? '<span class="badge">' + esc(it.badge) + '</span>' : '') + '</b>' +
+          (it.desc ? '<span class="d">' + esc(it.desc) + '</span>' : '') + '</div>' +
+          '<div class="go">‹</div></a>';
+      });
+    });
+    app.innerHTML = html;
+    empty.style.display = any ? "none" : "block";
+  }
+  app.addEventListener("click", function(e){
+    var a = e.target.closest(".card"); if (!a) return;
+    e.preventDefault(); openUrl(a.getAttribute("data-url"));
+  });
+  app.addEventListener("pointermove", function(e){
+    var a = e.target.closest(".card"); if (!a) return;
+    var r = a.getBoundingClientRect();
+    a.style.setProperty("--mx", (e.clientX - r.left) + "px");
+    a.style.setProperty("--my", (e.clientY - r.top) + "px");
+  });
+  document.getElementById("q").addEventListener("input", function(e){ render(e.target.value); });
+  render();
+})();
+</script>
+</body>
+</html>
