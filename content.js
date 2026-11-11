@@ -48,7 +48,7 @@ window.CLASSLINE = {
           url: "https://t.me/CLASSLINE_COM/3248"
         },
         {
-          icon: "qb", tint: "#ff2a3d",
+          icon: "pack", tint: "#ff2a3d",
           title: "آرشیو پک QB ماز",
           desc: "کتاب‌های QB ماز با کیفیت اصلی چاپخانه",
           url: "https://t.me/CLASSLINE_COM/2792"
